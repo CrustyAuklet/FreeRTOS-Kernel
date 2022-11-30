@@ -233,7 +233,8 @@ add_library(freertos_kernel STATIC
     timers.c
 
     # If FREERTOS_HEAP is digit between 1 .. 5 - it is heap number, otherwise - it is path to custom heap source file
-    $<IF:$<BOOL:$<FILTER:${FREERTOS_HEAP},EXCLUDE,^[1-5]$>>,${FREERTOS_HEAP},portable/MemMang/heap_${FREERTOS_HEAP}.c>
+    # Disable heap if set to an empty string, 0, FALSE, OFF, N, NO, IGNORE, NOTFOUND, or ends with -NOTFOUND
+    $<IF:$<BOOL:${FREERTOS_HEAP}>,$<IF:$<BOOL:$<FILTER:${FREERTOS_HEAP},EXCLUDE,^[1-5]$>>,${FREERTOS_HEAP},portable/MemMang/heap_${FREERTOS_HEAP}.c>,>
 )
 
 target_include_directories(freertos_kernel
